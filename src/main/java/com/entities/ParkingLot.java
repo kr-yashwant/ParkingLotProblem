@@ -15,25 +15,28 @@ public class ParkingLot {
     private final int MAX_CARS;
     private List<ParkingLotUser> concernedPeopleList;
 
-    public ParkingLot(int initialCapacity, ParkingLotUser parkingLotOwner, ParkingLotUser securityPerson) {
+    public ParkingLot(int initialCapacity, List<ParkingLotUser> concernedPeopleList) {
         MAX_CARS = initialCapacity;
         this.parkedCars = new HashMap<>();
         this.concernedPeopleList = new ArrayList<>();
-        this.concernedPeopleList.add(parkingLotOwner);
-        this.concernedPeopleList.add(securityPerson);
+        this.concernedPeopleList = concernedPeopleList;
     }
 
     public int park(Car car) throws CarAlreadyParkedException, ParkingLotFullException {
         if (this.isParked(car)) {
             throw new CarAlreadyParkedException("Car is already parked with this number");
         }
-        if (parkedCars.size() == MAX_CARS) {
+        if (this.isFull()) {
             throw new ParkingLotFullException("Slots are full");
         }
         int slotNumber = this.parkedCars.size() + 1;
         this.parkedCars.put(slotNumber, car);
-        if (this.parkedCars.size() == MAX_CARS) this.notifyConcernedUsersAboutFullParkingLot();
+        if (this.isFull()) this.notifyConcernedUsersAboutFullParkingLot();
         return slotNumber;
+    }
+
+    private boolean isFull() {
+        return parkedCars.size() == MAX_CARS;
     }
 
     public Car unPark(int tokenNumber) throws CarNotParkedException {
@@ -46,13 +49,11 @@ public class ParkingLot {
         return this.parkedCars.containsValue(car);
     }
 
-    public List<ParkingLotUser> getConcernedPeopleList() {
+    private List<ParkingLotUser> getConcernedPeopleList() {
         return concernedPeopleList;
     }
 
     private void notifyConcernedUsersAboutFullParkingLot() {
-        for(ParkingLotUser user: this.concernedPeopleList) {
-            user.notifyLotFull();
-        }
+        this.concernedPeopleList.forEach(parkingLotUser -> parkingLotUser.notifyLotFull());
     }
 }
