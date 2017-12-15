@@ -66,35 +66,19 @@ public class ParkingLotTest {
     }
 
     @Test
-    public void validateIfLotOwnerIsNotifiedIfLotIsFull() throws CarAlreadyParkedException, ParkingLotFullException {
-        NotifiableUser parkingLotOwner = mock(NotifiableUser.class);
-        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new NotifiableUser[]{parkingLotOwner}));
+    public void validateIfSingleSubscriberIsNotifiedIfLotIsFull() throws CarAlreadyParkedException, ParkingLotFullException {
+        ParkingLotUser parkingLotOwner = mock(NotifiableUser.class);
+        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new ParkingLotUser[]{parkingLotOwner}));
         assertTrue(parkingLot.park(new Car(888)) > 0);
         verify(parkingLotOwner, times(1)).notifyLotFull();
     }
 
     @Test
-    public void validateIfSecurityPersonnelNotifiedIfLotIsFull() throws CarAlreadyParkedException, ParkingLotFullException {
-        NotifiableUser securityPersonnel = mock(NotifiableUser.class);
-        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new NotifiableUser[]{securityPersonnel}));
-        assertTrue(parkingLot.park(new Car(888)) > 0);
-        verify(securityPersonnel, times(1)).notifyLotFull();
-    }
-
-    @Test
-    public void validateIfTrafficAreNotifiedIfLotIsFull() throws CarAlreadyParkedException, ParkingLotFullException {
-        NotifiableUser roadTrafficCop = mock(NotifiableUser.class);
-        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new NotifiableUser[]{roadTrafficCop}));
-        assertTrue(parkingLot.park(new Car(888)) > 0);
-        verify(roadTrafficCop, times(1)).notifyLotFull();
-    }
-
-    @Test
     public void validateIfAllConcernedPeopleAreNotifiedIfLotIsFull() throws CarAlreadyParkedException, ParkingLotFullException {
-        NotifiableUser parkingLotOwner = mock(NotifiableUser.class);
-        NotifiableUser securityPersonnel = mock(NotifiableUser.class);
-        NotifiableUser roadTrafficCop = mock(NotifiableUser.class);
-        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new NotifiableUser[]{parkingLotOwner, securityPersonnel, roadTrafficCop}));
+        ParkingLotUser parkingLotOwner = mock(ParkingLotUser.class);
+        ParkingLotUser securityPersonnel = mock(ParkingLotUser.class);
+        ParkingLotUser roadTrafficCop = mock(ParkingLotUser.class);
+        ParkingLot parkingLot = new ParkingLot(1, Arrays.asList(new ParkingLotUser[]{parkingLotOwner, securityPersonnel, roadTrafficCop}));
         assertTrue(parkingLot.park(new Car(888)) > 0);
         verify(parkingLotOwner, times(1)).notifyLotFull();
         verify(securityPersonnel, times(1)).notifyLotFull();
