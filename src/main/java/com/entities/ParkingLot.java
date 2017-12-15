@@ -23,26 +23,29 @@ public class ParkingLot {
     }
 
     public int park(Car car) throws CarAlreadyParkedException, ParkingLotFullException {
-        if (this.isParked(car)) {
-            throw new CarAlreadyParkedException("Car is already parked with this number");
-        }
-        if (this.isFull()) {
-            throw new ParkingLotFullException("Slots are full");
-        }
-        int slotNumber = this.parkedCars.size() + 1;
-        this.parkedCars.put(slotNumber, car);
-        if (this.isFull()) this.notifyConcernedUsersAboutFullParkingLot();
-        return slotNumber;
-    }
+        if (this.isParked(car)) throw new CarAlreadyParkedException("Car is already parked with this number");
+        if (this.isFull()) throw new ParkingLotFullException("Slots are full");
 
-    private boolean isFull() {
-        return parkedCars.size() == MAX_CARS;
+        int tokenNumber = createNewToken(car);
+        this.parkedCars.put(tokenNumber, car);
+
+        if (this.isFull()) this.notifyConcernedUsersAboutFullParkingLot();
+
+        return tokenNumber;
     }
 
     public Car unPark(int tokenNumber) throws CarNotParkedException {
         Car car = this.parkedCars.remove(tokenNumber);
-        if(car == null)throw new CarNotParkedException("This car is not parked in this lot");
+        if(car == null) throw new CarNotParkedException("This car is not parked in this lot");
         return car;
+    }
+
+    private int createNewToken(Car car) {
+        return this.parkedCars.size() + 1 + car.hashCode();
+    }
+
+    private boolean isFull() {
+        return parkedCars.size() == MAX_CARS;
     }
 
     private boolean isParked(Car car) {
@@ -54,6 +57,6 @@ public class ParkingLot {
     }
 
     private void notifyConcernedUsersAboutFullParkingLot() {
-        this.concernedPeopleList.forEach(parkingLotUser -> parkingLotUser.notifyLotFull());
+        this.concernedPeopleList.forEach(ParkingLotUser::notifyLotFull);
     }
 }
