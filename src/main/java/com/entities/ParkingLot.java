@@ -36,15 +36,20 @@ public class ParkingLot {
 
     public Car unPark(int tokenNumber) throws CarNotParkedException {
         Car car = this.parkedCars.remove(tokenNumber);
-        if(car == null) throw new CarNotParkedException("This car is not parked in this lot");
+        if (car == null) throw new CarNotParkedException("This car is not parked in this lot");
+        if (this.justFreed()) this.notifyConcernedUsersAboutAvailableParkingLot();
         return car;
+    }
+
+    private boolean justFreed() {
+        return parkedCars.size() == MAX_CARS - 1;
     }
 
     private int createNewToken(Car car) {
         return this.parkedCars.size() + 1 + car.hashCode();
     }
 
-    private boolean isFull() {
+    public boolean isFull() {
         return parkedCars.size() == MAX_CARS;
     }
 
@@ -58,5 +63,8 @@ public class ParkingLot {
 
     private void notifyConcernedUsersAboutFullParkingLot() {
         this.concernedPeopleList.forEach(ParkingLotUser::notifyLotFull);
+    }
+    private void notifyConcernedUsersAboutAvailableParkingLot() {
+        this.concernedPeopleList.forEach(ParkingLotUser::notifyLotAvailable);
     }
 }
